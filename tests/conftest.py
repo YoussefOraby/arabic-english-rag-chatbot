@@ -11,8 +11,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 @pytest.fixture
 def data_dir() -> Path:
-    """Path to test data directory."""
-    return Path(__file__).resolve().parent.parent / "data" / "raw"
+    """Path to test fixture directory."""
+    return Path(__file__).resolve().parent / "fixtures"
 
 
 @pytest.fixture
