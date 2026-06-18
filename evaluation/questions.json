@@ -1,0 +1,240 @@
+[
+  {
+    "id": "en-001",
+    "question": "What are the three RAG paradigms discussed in the paper?",
+    "language": "english",
+    "expected_answer_summary": "Naive RAG, Advanced RAG, Modular RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [1],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Naive RAG", "Advanced RAG", "Modular RAG"]
+  },
+  {
+    "id": "en-002",
+    "question": "What is Naive RAG?",
+    "language": "english",
+    "expected_answer_summary": "Naive RAG is the classic RAG framework with a retrieve-then-generate pipeline including index, retrieve and generate stages",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Naive RAG", "indexing", "retrieval", "generation"]
+  },
+  {
+    "id": "en-003",
+    "question": "What is Advanced RAG?",
+    "language": "english",
+    "expected_answer_summary": "Advanced RAG introduces pre-retrieval, retrieval and post-retrieval improvements to address limitations of Naive RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Advanced RAG", "pre-retrieval", "post-retrieval"]
+  },
+  {
+    "id": "en-004",
+    "question": "What is Modular RAG?",
+    "language": "english",
+    "expected_answer_summary": "Modular RAG adopts a modular architecture with trainable and flexible components enabling task-specific customization and pattern recombination",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3, 4],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Modular RAG", "modular", "flexible"]
+  },
+  {
+    "id": "en-005",
+    "question": "What challenges does RAG face?",
+    "language": "english",
+    "expected_answer_summary": "RAG faces challenges including missing content, not selected, not merged, hallucination, and relevance mismatch",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [15, 16, 17],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["missing content", "hallucination"]
+  },
+  {
+    "id": "en-006",
+    "question": "What does the paper say about evaluation of RAG systems?",
+    "language": "english",
+    "expected_answer_summary": "The paper discusses evaluation metrics, datasets and benchmarks for assessing RAG systems including answer quality and retrieval accuracy",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [12, 13],
+    "should_answer": true,
+    "question_type": "methodology",
+    "required_keywords": ["evaluation", "metrics", "benchmarks"]
+  },
+  {
+    "id": "en-007",
+    "question": "Compare Naive RAG and Advanced RAG.",
+    "language": "english",
+    "expected_answer_summary": "Naive RAG is the basic retrieve-then-generate pipeline while Advanced RAG adds pre-retrieval, retrieval and post-retrieval improvements for better quality",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3],
+    "should_answer": true,
+    "question_type": "comparison",
+    "required_keywords": ["Naive RAG", "Advanced RAG"]
+  },
+  {
+    "id": "ar-001",
+    "question": "ما هي أنواع RAG الثلاثة التي يناقشها البحث؟",
+    "language": "arabic",
+    "expected_answer_summary": "Naive RAG وAdvanced RAG وModular RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [1],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Naive RAG", "Advanced RAG", "Modular RAG"]
+  },
+  {
+    "id": "ar-002",
+    "question": "ما المقصود بـ Naive RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "Naive RAG هو إطار RAG الكلاسيكي الذي يعتمد على خط أنابيب استرجاع ثم توليد يتضمن مراحل الفهرسة والاسترجاع والتوليد",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Naive RAG", "RAG"]
+  },
+  {
+    "id": "ar-003",
+    "question": "ما هو Advanced RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "Advanced RAG يقدم تحسينات ما قبل الاسترجاع وأثناء الاسترجاع وما بعد الاسترجاع لمعالجة قيود Naive RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Advanced RAG"]
+  },
+  {
+    "id": "ar-004",
+    "question": "ما هو Modular RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "Modular RAG يتبنى بنية معيارية بمكونات قابلة للتدريب ومرنة تتيح التخصيص حسب المهمة وإعادة تركيب الأنماط",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3, 4],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Modular RAG"]
+  },
+  {
+    "id": "ar-005",
+    "question": "ما التحديات التي تواجه RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "تواجه RAG تحديات مثل المحتوى المفقود وعدم التحديد المناسب وعدم الدمج والهلوسة وعدم تطابق الصلة",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [15, 16, 17],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["تحديات", "RAG"]
+  },
+  {
+    "id": "mixed-001",
+    "question": "Explain Modular RAG بالعربي.",
+    "language": "mixed",
+    "expected_answer_summary": "Modular RAG is a modular architecture with flexible components that can be customized per task",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3, 4],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Modular RAG"]
+  },
+  {
+    "id": "mixed-002",
+    "question": "What is the difference between Naive RAG and Advanced RAG اشرح بالعربية؟",
+    "language": "mixed",
+    "expected_answer_summary": "Naive RAG is the basic pipeline while Advanced RAG adds pre-retrieval and post-retrieval improvements",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [2, 3],
+    "should_answer": true,
+    "question_type": "comparison",
+    "required_keywords": ["Naive RAG", "Advanced RAG"]
+  },
+  {
+    "id": "mixed-003",
+    "question": "ما هي التحديات التي facing RAG؟",
+    "language": "mixed",
+    "expected_answer_summary": "RAG faces challenges including missing content, not selected, not merged, hallucination and relevance issues",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [15, 16, 17],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["RAG", "challenges"]
+  },
+  {
+    "id": "mixed-004",
+    "question": "ما المقصود بـ Retrieval-Augmented Generation?",
+    "language": "mixed",
+    "expected_answer_summary": "Retrieval-Augmented Generation is a framework that combines retrieval from external knowledge sources with text generation by LLMs",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [1],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": ["Retrieval-Augmented Generation", "retrieval", "generation"]
+  },
+  {
+    "id": "unsupported-001",
+    "question": "What is the capital of Japan?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported"
+  },
+  {
+    "id": "unsupported-002",
+    "question": "Who won the 2022 FIFA World Cup?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported"
+  },
+  {
+    "id": "unsupported-003",
+    "question": "What is the recipe for making pasta?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported"
+  },
+  {
+    "id": "unsupported-004",
+    "question": "ما هي عاصمة مصر؟",
+    "language": "arabic",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported"
+  },
+  {
+    "id": "en-008",
+    "question": "What basic retrieval methods are discussed in the paper, such as dense retrieval, sparse/BM25 retrieval, and hybrid retrieval?",
+    "language": "english",
+    "expected_answer_summary": "The paper discusses dense retrieval, sparse retrieval (BM25), hybrid retrieval and reranking methods for RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [9, 10, 11],
+    "should_answer": true,
+    "question_type": "methodology",
+    "required_keywords": ["dense retrieval", "BM25", "hybrid"]
+  },
+  {
+    "id": "ar-006",
+    "question": "ما طرق الاسترجاع الأساسية التي يناقشها البحث، مثل الاسترجاع الكثيف و BM25 والاسترجاع الهجين؟",
+    "language": "arabic",
+    "expected_answer_summary": "يناقش البحث الاسترجاع الكثيف والاسترجاع المتناثر BM25 والاسترجاع الهجين وإعادة الترتيب",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [9, 10, 11],
+    "should_answer": true,
+    "question_type": "methodology",
+    "required_keywords": ["BM25", "RAG"]
+  }
+]

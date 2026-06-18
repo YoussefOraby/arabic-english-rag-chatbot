@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-chatbot"
+version = "0.1.0"
+description = "Arabic-English RAG Chatbot with local LLM support"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+dependencies = [
+    "pymupdf>=1.23.0",
+    "langchain-community>=0.2.0",
+    "langchain-core>=0.2.0",
+    "langchain-text-splitters>=0.2.0",
+    "sentence-transformers>=2.2.0",
+    "chromadb>=0.4.0",
+    "sentence-transformers>=3.0.0",
+    "ollama>=0.2.0",
+    "google-genai>=2.0.0",
+    "streamlit>=1.30.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.29.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0",
+    "rich>=13.0.0",
+    "fpdf2>=2.8.0",
+    "arabic-reshaper>=3.0.0",
+    "python-bidi>=0.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-timeout>=2.3.0",
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["rag_chatbot*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["evaluation/"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"

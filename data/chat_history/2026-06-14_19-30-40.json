@@ -1,0 +1,165 @@
+[
+  {
+    "role": "user",
+    "content": "WHAT IS THE OBJECT OF THIS PAPER?"
+  },
+  {
+    "role": "assistant",
+    "content": "The object of this paper is to propose a method for building an index between multiple documents using Knowledge Graphs (KG) and to introduce an evaluation framework and benchmark.\n\nAccording to Context 1 [2312.10997v5.pdf, page 8], the authors aim to build an index between multiple documents using KG, which consists of nodes representing paragraphs or structures in the documents and edges indicating semantic/lexical similarity between paragraphs or relationships within the document structure.\n\nAdditionally, as mentioned in Context 2 [2312.10997v5.pdf, page 1], the paper introduces an evaluation framework and benchmark, suggesting that the primary goal is to provide a comprehensive assessment of the proposed method.\n\nContext 3 [2312.10997v5.pdf, page 16] also supports this answer by stating that the summary of the paper emphasizes RAG's significant advancement in enhancing the capabilities of LLMs by integrating parameterized knowledge from language models with extensive non-parameterized data from external knowledge bases.\n\nFinally, Context 4 [2312.10997v5.pdf, page 14] mentions that the research findings reveal that including irrelevant documents can unexpectedly increase accuracy by over 30%, which suggests that the paper is focused on improving knowledge retrieval and reasoning problems in a multi-document environment.\n\nTherefore, based on the provided context, it appears that the object of this paper is to propose a method for building an index between multiple documents using KG and to evaluate its effectiveness.",
+    "source_documents": {
+      "2312.10997v5.pdf": [
+        1,
+        8,
+        14,
+        16
+      ]
+    },
+    "debug_chunks": [
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 8,
+        "score": 0.391,
+        "preview": "To capture the logical relationship between document\ncontent and structure, KGP [91] proposed a method of building\nan in"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 1,
+        "score": 0.367,
+        "preview": "Furthermore, this paper introduces up-to-date evalua-\ntion framework and benchmark. At the end, this article delineates\n"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 16,
+        "score": 0.353,
+        "preview": "VIII. CONCLUSION\nThe summary of this paper, as depicted in Figure 6, empha-\nsizes RAG’s significant advancement in enhan"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 14,
+        "score": 0.317,
+        "preview": "Cuconasu et al. [54] analyze which\ntype of documents should be retrieved, evaluate the relevance\nof the documents to the"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "content": "IS THIS PROJECT TALKING ABOUT RAG"
+  },
+  {
+    "role": "assistant",
+    "content": "Yes, based on the provided context, it appears that this project is talking about RAG (Retrieval-Augmentation-Generation) paradigms [Context 1 [2312.10997v5.pdf, page 1]]. The paper provides a comprehensive review of the progression of RAG paradigms, including the Naive RAG, Advanced RAG, and Modular RAG [Context 2 [2312.10997v5.pdf, page 2]], and discusses the challenges that RAG currently faces and its future development directions [Context 4 [2312.10997v5.pdf, page 1]].",
+    "source_documents": {
+      "2312.10997v5.pdf": [
+        1,
+        2,
+        12
+      ]
+    },
+    "debug_chunks": [
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 1,
+        "score": 0.677,
+        "preview": "This comprehensive review paper offers a detailed\nexamination of the progression of RAG paradigms, encompassing\nthe Naiv"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 2,
+        "score": 0.662,
+        "preview": "These articles, combined with the original\nquestion, form a comprehensive prompt that empowers LLMs\nto generate a well-i"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 12,
+        "score": 0.65,
+        "preview": "VI. TASK AND EVALUATION\nThe rapid advancement and growing adoption of RAG\nin the field of NLP have propelled the evaluat"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 2,
+        "score": 0.644,
+        "preview": "Sec-\ntion VII mainly discusses the challenges that RAG currently\nfaces and its future development directions. At last, t"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "content": "What are the three RAG paradigms discussed in the paper?"
+  },
+  {
+    "role": "assistant",
+    "content": "The three RAG paradigms discussed in the paper are:\n\n1. Naive RAG\n2. Advanced RAG\n3. Modular RAG [Context 1 [2312.10997v5.pdf, page 2]].\n\nThese paradigms represent a progression of enhancements over their predecessors, with each building upon the previous one to improve the capabilities of RAG systems [Context 4 [2312.10997v5.pdf, page 16]].",
+    "source_documents": {
+      "2312.10997v5.pdf": [
+        1,
+        2,
+        16
+      ]
+    },
+    "debug_chunks": [
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 2,
+        "score": 0.768,
+        "preview": "These articles, combined with the original\nquestion, form a comprehensive prompt that empowers LLMs\nto generate a well-i"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 2,
+        "score": 0.753,
+        "preview": "Additionally,\nwe anticipate future directions for RAG, emphasizing\npotential enhancements to tackle current challenges. "
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 1,
+        "score": 0.747,
+        "preview": "This comprehensive review paper offers a detailed\nexamination of the progression of RAG paradigms, encompassing\nthe Naiv"
+      },
+      {
+        "source": "2312.10997v5.pdf",
+        "page": 16,
+        "score": 0.696,
+        "preview": "The survey showcases the evolution\nof RAG technologies and their application on many different\ntasks. The analysis outli"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "content": "What is the capital of Japan?"
+  },
+  {
+    "role": "assistant",
+    "content": "I don't know based on the provided documents. The context only discusses a research paper about building an index between multiple documents using Knowledge Graphs and RAG paradigms, but it does not mention anything related to geography or countries like Japan. [page 0]",
+    "source_documents": {
+      "": [
+        0
+      ]
+    },
+    "debug_chunks": [
+      {
+        "source": "",
+        "page": 0,
+        "score": 0.0,
+        "preview": ""
+      },
+      {
+        "source": "",
+        "page": 0,
+        "score": 0.0,
+        "preview": ""
+      },
+      {
+        "source": "",
+        "page": 0,
+        "score": 0.0,
+        "preview": ""
+      },
+      {
+        "source": "",
+        "page": 0,
+        "score": 0.0,
+        "preview": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,97 @@
+# RAG Chatbot Configuration
+# All tunable parameters live here — code reads from this via src/config.py
+
+# === PDF Processing ===
+pdf:
+  # Chunking settings
+  chunk_size: 500          # Target characters per chunk
+  chunk_overlap: 100       # Overlap between chunks
+  # Arabic-aware separators (RTL punctuation + standard)
+  separators: ["\n\n", "\n", "؟", "،", ". ", "! ", "? ", "\u061b", "\u06d4", " ", ""]
+  # Minimum chunk length to keep (filter noise)
+  min_chunk_length: 50
+  # OCR fallback — trigger when avg chars/page is below this threshold
+  ocr_threshold_chars: 50
+  # OCR language (Tesseract format, e.g. 'eng+ara')
+  ocr_language: "eng+ara"
+  # Enable chart/diagram detection via pix2text
+  enable_chart_detection: false
+
+# === Embeddings ===
+embeddings:
+  # Multilingual model supporting Arabic + English
+  model_name: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  # Device: "cpu", "cuda", "mps" (auto-detected if not set)
+  device: "cpu"
+  # Batch size for encoding
+  batch_size: 32
+  # Normalize embeddings for cosine similarity
+  normalize_embeddings: true
+
+# === Vector Store (ChromaDB) ===
+vector_store:
+  persist_directory: "data/processed/chromadb"
+  collection_name: "documents"
+  # Distance metric: "cosine", "l2", "ip"
+  distance_metric: "cosine"
+
+# === LLM ===
+llm:
+  # Primary: Local Ollama
+  ollama:
+    model: "llama3.2:3b"  # ~2GB RAM, fast on CPU, good Ar/En
+    base_url: "http://localhost:11434"
+    temperature: 0.1
+    num_ctx: 4096
+    # Timeout for slow CPU inference (seconds)
+    timeout: 120
+  # Fallback: Google Gemini Free Tier
+  gemini:
+    model: "gemini-2.0-flash"
+    temperature: 0.1
+    # Set via GEMINI_API_KEY in .env
+
+# === Retrieval ===
+retrieval:
+  top_k: 4                    # Final chunks per query (after reranking)
+  score_threshold: 0.3        # Minimum similarity score (0-1)
+  # Return page citations in metadata
+  include_metadata: true
+  # Hybrid search (BM25 + dense)
+  enable_hybrid: true
+  hybrid_alpha: 0.5           # Weight for dense scores (0=full BM25, 1=full dense)
+  # Cross-encoder reranker (requires ~500MB model download)
+  enable_reranker: false
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  rerank_top_k: 10            # Candidates to retrieve before reranking
+
+# === RAG Chain ===
+rag:
+  # System prompt template (language-aware)
+  # Uses language-aware prompts from src/rag/prompts.py (English_vs_Arabic)
+  system_prompt_template: ""
+  # Max tokens for answer generation
+  max_tokens: 512
+  # Max conversation history pairs to include for context
+  max_history_pairs: 4
+
+# === Streamlit UI ===
+ui:
+  page_title: "Arabic-English RAG Chatbot"
+  page_icon: "📚"
+  layout: "wide"
+  # Max chat history messages to display
+  max_history: 10
+  # When true and no file is uploaded, clear all documents on session start
+  clear_documents_when_no_upload: true
+
+# === Document Management ===
+document:
+  max_file_size_mb: 50
+  allowed_extensions: [".pdf"]
+
+# === Logging ===
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+  file: "logs/app.log"

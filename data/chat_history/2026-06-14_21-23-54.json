@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "What is the capital of Japan?"
+  },
+  {
+    "role": "assistant",
+    "content": "Insufficient data to verify from the uploaded documents.",
+    "source_documents": {},
+    "debug_chunks": []
+  }
+]

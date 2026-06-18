@@ -1,0 +1,41 @@
+services:
+  # === Main Application (Streamlit UI + FastAPI) ===
+  app:
+    build:
+      context: .
+      target: prod
+    container_name: rag-chatbot-app
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    ports:
+      - "8501:8501"   # Streamlit UI
+      - "8000:8000"   # FastAPI
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    env_file:
+      - .env
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # === Local LLM (Ollama) ===
+  ollama:
+    image: ollama/ollama:latest
+    container_name: rag-chatbot-ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  ollama_data:
