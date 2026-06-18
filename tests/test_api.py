@@ -167,12 +167,11 @@ def test_delete_chunks_actually_removed():
 
 def test_reindex_workflow():
     """Verify reindex flow completes through background processing."""
-    pdf_path = Path(__file__).resolve().parent.parent / "data" / "raw" / "sample_ar.pdf"
-    with open(pdf_path, "rb") as f:
-        upload = client.post(
-            "/upload",
-            files={"file": ("sample_ar.pdf", f, "application/pdf")},
-        ).json()
+    content = _make_pdf()[1]
+    upload = client.post(
+        "/upload",
+        files={"file": ("sample_ar.pdf", content, "application/pdf")},
+    ).json()
     doc_id = upload["document_id"]
     resp = client.post(f"/documents/{doc_id}/reindex")
     assert resp.status_code == 200
