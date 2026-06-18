@@ -30,6 +30,7 @@ dependencies = [
     "fpdf2>=2.8.0",
     "arabic-reshaper>=3.0.0",
     "python-bidi>=0.6.0",
+    "rank-bm25>=0.2.0",
 ]
 
 [project.optional-dependencies]
