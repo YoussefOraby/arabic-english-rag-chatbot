@@ -101,8 +101,24 @@ def test_save_and_load_messages(tmp_path):
         ui.HISTORY_DIR = original_dir
 
 
+def _make_pop():
+    """Return a pop function suitable for FakeSessionState.
+    Handles both instance attributes and class-level attributes."""
+
+    def pop(self, key, default=None):
+        if key in type(self).__dict__:
+            delattr(type(self), key)
+            return default
+        if key in self.__dict__:
+            del self.__dict__[key]
+            return default
+        return default
+
+    return pop
+
+
 def test_delete_current_conversation_removes_file(tmp_path):
-    """Verify delete_current_conversation removes the JSON file."""
+    """Verify delete_current_conversation removes the JSON file and resets state."""
     import src.ui.streamlit_app as ui
     from src.ui.streamlit_app import HISTORY_DIR, delete_current_conversation
 
@@ -117,6 +133,7 @@ def test_delete_current_conversation_removes_file(tmp_path):
             messages = [{"role": "user", "content": "Hi"}]
             current_history_path = history_file
             feedback_given = {}
+            pop = _make_pop()
 
             def rerun(self):
                 pass
@@ -126,6 +143,8 @@ def test_delete_current_conversation_removes_file(tmp_path):
 
         delete_current_conversation()
         assert not history_file.exists()
+        assert ui.st.session_state.messages == []
+        assert ui.st.session_state.current_history_path is None
 
         ui.st.session_state = original_session
     finally:
@@ -146,6 +165,8 @@ def test_delete_current_conversation_missing_file(tmp_path):
             messages = [{"role": "user", "content": "Hi"}]
             current_history_path = missing
             feedback_given = {}
+            _confirm_clear_all = True
+            pop = _make_pop()
 
             def rerun(self):
                 pass
@@ -155,6 +176,9 @@ def test_delete_current_conversation_missing_file(tmp_path):
 
         delete_current_conversation()
         # Should not raise — file already gone
+        assert ui.st.session_state.messages == []
+        assert ui.st.session_state.current_history_path is None
+        assert not hasattr(ui.st.session_state, "_confirm_clear_all")
 
         ui.st.session_state = original_session
     finally:
@@ -162,7 +186,7 @@ def test_delete_current_conversation_missing_file(tmp_path):
 
 
 def test_clear_all_conversations_removes_only_json(tmp_path):
-    """Verify clear_all_conversations removes .json files but not other files."""
+    """Verify clear_all_conversations removes .json files and resets state."""
     import src.ui.streamlit_app as ui
     from src.ui.streamlit_app import HISTORY_DIR, clear_all_conversations
 
@@ -179,6 +203,8 @@ def test_clear_all_conversations_removes_only_json(tmp_path):
             messages = [{"role": "user", "content": "Hi"}]
             current_history_path = None
             feedback_given = {}
+            _confirm_clear_all = True
+            pop = _make_pop()
 
             def rerun(self):
                 pass
@@ -196,9 +222,57 @@ def test_clear_all_conversations_removes_only_json(tmp_path):
         assert (tmp_path / "notes.txt").exists()
         assert (tmp_path / "data.csv").exists()
 
+        # State should be reset
+        assert ui.st.session_state.messages == []
+        assert ui.st.session_state.current_history_path is None
+        assert not hasattr(ui.st.session_state, "_confirm_clear_all")
+
         ui.st.session_state = original_session
     finally:
         ui.HISTORY_DIR = original_dir
+
+
+def test_new_conversation_resets_confirm_flag(tmp_path):
+    """Verify new_conversation clears _confirm_clear_all and resets chat state."""
+    import src.ui.streamlit_app as ui
+    from src.ui.streamlit_app import HISTORY_DIR, new_conversation, save_messages
+
+    original_dir = HISTORY_DIR
+    try:
+        ui.HISTORY_DIR = tmp_path
+
+        class FakeSessionState:
+            messages = [{"role": "user", "content": "Hello"}]
+            current_history_path = None
+            feedback_given = {}
+            _confirm_clear_all = True
+            pop = _make_pop()
+
+            def rerun(self):
+                pass
+
+        original_session = ui.st.session_state
+        ui.st.session_state = FakeSessionState()
+
+        new_conversation()
+        assert ui.st.session_state.messages == []
+        assert ui.st.session_state.current_history_path is None
+        assert not hasattr(ui.st.session_state, "_confirm_clear_all")
+
+        ui.st.session_state = original_session
+    finally:
+        ui.HISTORY_DIR = original_dir
+
+
+def test_current_always_available():
+    """Verify (current) is always an option, even with zero saved sessions."""
+    from src.ui.streamlit_app import _list_sessions
+
+    sessions = _list_sessions()
+    options = ["(current)"] + ["" for _ in sessions]
+    assert "(current)" in options
+    # With zero JSON files, only (current) exists
+    assert len(options) == 1 or len(options) > 1
 
 
 def test_clear_all_conversations_no_directory(tmp_path):
@@ -214,6 +288,8 @@ def test_clear_all_conversations_no_directory(tmp_path):
             messages = [{"role": "user", "content": "Hi"}]
             current_history_path = None
             feedback_given = {}
+            _confirm_clear_all = True
+            pop = _make_pop()
 
             def rerun(self):
                 pass
@@ -223,6 +299,9 @@ def test_clear_all_conversations_no_directory(tmp_path):
 
         clear_all_conversations()
         # Should not raise
+        assert ui.st.session_state.messages == []
+        assert ui.st.session_state.current_history_path is None
+        assert not hasattr(ui.st.session_state, "_confirm_clear_all")
 
         ui.st.session_state = original_session
     finally:

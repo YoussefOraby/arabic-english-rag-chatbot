@@ -131,6 +131,7 @@ def new_conversation():
     st.session_state.messages = []
     st.session_state.current_history_path = None
     st.session_state.feedback_given = {}
+    st.session_state.pop("_confirm_clear_all", None)
     st.rerun()
 
 
@@ -142,18 +143,20 @@ def delete_current_conversation():
     st.session_state.messages = []
     st.session_state.current_history_path = None
     st.session_state.feedback_given = {}
+    st.session_state.pop("_confirm_clear_all", None)
     st.rerun()
 
 
 def clear_all_conversations():
-    """Delete all conversation JSON files in the history directory."""
-    if not HISTORY_DIR.exists():
-        return
-    for f in HISTORY_DIR.glob("*.json"):
-        f.unlink()
+    """Delete all conversation JSON files in the history directory
+    and reset the current chat state."""
+    if HISTORY_DIR.exists():
+        for f in HISTORY_DIR.glob("*.json"):
+            f.unlink()
     st.session_state.messages = []
     st.session_state.current_history_path = None
     st.session_state.feedback_given = {}
+    st.session_state.pop("_confirm_clear_all", None)
     st.rerun()
 
 
@@ -303,17 +306,20 @@ def main():
         with col1:
             sessions = _list_sessions()
             labels = [_session_label(s) for s in sessions]
-            if sessions:
-                selected_label = st.selectbox(
-                    "Load previous",
-                    ["(current)"] + labels,
-                    label_visibility="collapsed",
-                )
-                if selected_label != "(current)":
-                    idx = labels.index(selected_label)
+            # Always show "(current)" — even when no saved sessions exist
+            selected_label = st.selectbox(
+                "Load previous",
+                ["(current)"] + labels,
+                label_visibility="collapsed",
+            )
+            if selected_label != "(current)":
+                idx = labels.index(selected_label)
+                target_path = sessions[idx]
+                # Avoid re-loading the same conversation (prevents rerun loop)
+                if st.session_state.current_history_path != target_path:
                     try:
-                        st.session_state.messages = load_messages(sessions[idx])
-                        st.session_state.current_history_path = sessions[idx]
+                        st.session_state.messages = load_messages(target_path)
+                        st.session_state.current_history_path = target_path
                         st.session_state.feedback_given = {}
                         st.rerun()
                     except Exception as ex:
@@ -321,7 +327,8 @@ def main():
         with col2:
             st.button("New", on_click=new_conversation)
 
-        if st.session_state.current_history_path:
+        # "Delete current" is hidden when (current) is selected with no saved file
+        if st.session_state.current_history_path and st.session_state.current_history_path.exists():
             if st.button("Delete current", type="secondary", use_container_width=True):
                 delete_current_conversation()
 
