@@ -8,7 +8,7 @@ from collections.abc import Generator
 from typing import Any
 
 from src.config import settings
-from src.embeddings.store import ChromaStore, SearchResult
+from src.embeddings.store import ChromaStore
 from src.llm.base import BaseLLM
 from src.rag.prompts import format_chunks_for_context, format_history, get_system_prompt
 from src.retrieval.hybrid import BM25Index, rff_merge
@@ -162,101 +162,6 @@ class RAGChain:
             "insufficient_data": insufficient,
         }
 
-    # ── Query intent detection ──────────────────────────────────────────────
-
-    @staticmethod
-    def _detect_query_intent(question: str) -> str:
-        """Classify query intent for adaptive retrieval.
-
-        Returns one of: ``"identity"``, ``"list"``, ``"default"``.
-        """
-        q = question.lower().strip()
-
-        identity_tokens = [
-            "name",
-            "candidate",
-            "owner",
-            "email",
-            "phone",
-            "contact",
-            "called",
-            "who is",
-            "who am i",
-            "full name",
-        ]
-        if any(t in q for t in identity_tokens):
-            return "identity"
-
-        # Use noun-based tokens to avoid false positives on generic questions
-        list_tokens = [
-            "list",
-            "projects",
-            "skills",
-            "experience",
-            "education",
-            "certifications",
-            "all the",
-            "each",
-            "every",
-            "enumerate",
-        ]
-        if any(t in q for t in list_tokens):
-            return "list"
-
-        return "default"
-
-    # ── Query expansion ─────────────────────────────────────────────────────
-
-    @staticmethod
-    def _expand_query(question: str, intent: str) -> str:
-        """Expand query with intent-aware keywords to improve retrieval.
-
-        Does not alter the original question — only appends generic terms that
-        help the embedding model focus on the relevant section of a document.
-        """
-        if intent == "identity":
-            return f"{question} name email contact header personal information"
-        if intent == "list":
-            return f"{question} list details summary"
-        return question
-
-    # ── Identity-chunk injection ────────────────────────────────────────────
-
-    def _ensure_identity_in_context(
-        self, results: list[SearchResult], document_id: str | None
-    ) -> list[SearchResult]:
-        """If no identity info (name / email / phone) is present in results,
-        inject a header chunk from the top document."""
-        if not results:
-            return results
-
-        # Heuristic: if any result contains an email, header is already present
-        for r in results:
-            if re.search(r"[\w\.-]+@[\w\.-]+\.\w+", r.chunk.text[:200]):
-                return results
-
-        # Find the header chunk of the top document
-        top_doc = results[0].chunk.source_file
-        all_chunks = self.store.get_all_chunks()
-        doc_chunks = [c for c in all_chunks if c.source_file == top_doc]
-        if not doc_chunks:
-            return results
-
-        # Prefer a chunk containing an email address; fall back to earliest page
-        header = next(
-            (c for c in doc_chunks if re.search(r"[\w\.-]+@[\w\.-]+\.\w+", c.text)),
-            None,
-        )
-        if header is None:
-            header = min(doc_chunks, key=lambda c: (c.page_num, c.chunk_id))
-
-        if any(r.chunk.text == header.text for r in results):
-            return results
-
-        out = results[:-1]
-        out.insert(0, SearchResult(chunk=header, score=1.0))
-        return out
-
     def _retrieve(self, question: str, document_id: str | None = None) -> list[Any]:
         """Retrieve relevant chunks — dense only, hybrid (BM25+RRF), or hybrid+rerank.
 
@@ -264,8 +169,6 @@ class RAGChain:
             question: The user query
             document_id: Optional — restrict retrieval to a single document
         """
-        intent = self._detect_query_intent(question)
-        q = self._expand_query(question, intent)
 
         # Determine how many candidates to fetch before reranking / fusion
         if settings.retrieval.enable_hybrid or settings.retrieval.enable_reranker:
@@ -275,7 +178,7 @@ class RAGChain:
 
         # Step 1: Dense retrieval (always)
         dense_results = self.store.similarity_search(
-            q,
+            question,
             k=candidate_k,
             score_threshold=settings.retrieval.score_threshold,
             document_id=document_id,
@@ -287,7 +190,7 @@ class RAGChain:
                 self.rebuild_index()
 
             if self._bm25 is not None and self._bm25.is_ready:
-                bm25_results = self._bm25.search(q, k=candidate_k, document_id=document_id)
+                bm25_results = self._bm25.search(question, k=candidate_k, document_id=document_id)
                 merged = rff_merge(
                     dense_results,
                     bm25_results,
@@ -303,16 +206,10 @@ class RAGChain:
         if settings.retrieval.enable_reranker and merged:
             if self._reranker is None:
                 self._reranker = Reranker()
-            merged = self._reranker.rerank(q, merged, top_k=self.top_k)
+            merged = self._reranker.rerank(question, merged, top_k=self.top_k)
 
         # Step 4: Trim to final top_k
-        results = merged[: self.top_k]
-
-        # Step 5: Intent-aware post-processing
-        if intent == "identity":
-            results = self._ensure_identity_in_context(results, document_id)
-
-        return results
+        return merged[: self.top_k]
 
     def _build_prompt(
         self, question: str, chunks: list[Any], history: list[dict] | None = None
