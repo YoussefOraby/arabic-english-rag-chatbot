@@ -14,14 +14,21 @@ venv/
 env/
 ENV/
 
-# === Project Data (generated/large) ===
+# === Project Data (generated/large/private) ===
+
 data/raw/*.pdf
 data/raw/*.txt
-data/processed/
-!data/raw/.gitkeep
+
+data/processed/*
 !data/processed/.gitkeep
+
+data/chat_history/
+data/feedback/
+
 logs/
 *.log
+
+!data/raw/.gitkeep
 
 # === Secrets ===
 .env
@@ -40,7 +47,6 @@ logs/
 Thumbs.db
 
 # === Docker ===
-.dockerignore
 
 # === Build/Dist ===
 build/
