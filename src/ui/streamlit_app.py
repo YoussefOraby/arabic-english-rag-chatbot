@@ -134,6 +134,29 @@ def new_conversation():
     st.rerun()
 
 
+def delete_current_conversation():
+    """Delete the currently selected conversation JSON file and reset chat state."""
+    path = st.session_state.current_history_path
+    if path is not None and path.exists():
+        path.unlink()
+    st.session_state.messages = []
+    st.session_state.current_history_path = None
+    st.session_state.feedback_given = {}
+    st.rerun()
+
+
+def clear_all_conversations():
+    """Delete all conversation JSON files in the history directory."""
+    if not HISTORY_DIR.exists():
+        return
+    for f in HISTORY_DIR.glob("*.json"):
+        f.unlink()
+    st.session_state.messages = []
+    st.session_state.current_history_path = None
+    st.session_state.feedback_given = {}
+    st.rerun()
+
+
 def _save_feedback(msg_idx: int, answer: str, feedback: str):
     """Write feedback to JSONL file."""
     msg = st.session_state.messages[msg_idx]
@@ -297,6 +320,31 @@ def main():
                         st.error(f"Failed to load: {ex}")
         with col2:
             st.button("New", on_click=new_conversation)
+
+        if st.session_state.current_history_path:
+            if st.button("Delete current", type="secondary", use_container_width=True):
+                delete_current_conversation()
+
+        # Clear all conversations with confirmation
+        clear_key = "_confirm_clear_all"
+        if st.session_state.get(clear_key):
+            st.warning("This will permanently delete all saved conversations.")
+            col_a, col_b = st.columns(2)
+            with col_a:
+                if st.button("Yes, clear all", type="primary", use_container_width=True):
+                    clear_all_conversations()
+            with col_b:
+                if st.button("Cancel", use_container_width=True):
+                    st.session_state[clear_key] = False
+                    st.rerun()
+        else:
+            if st.button("Clear all conversations", use_container_width=True):
+                st.session_state[clear_key] = True
+                st.rerun()
+
+        st.caption(
+            "Chat history is saved locally under `data/chat_history/` and is ignored by Git."
+        )
 
         st.divider()
 
