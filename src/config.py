@@ -33,7 +33,7 @@ class VectorStoreConfig(BaseSettings):
 
 
 class OllamaConfig(BaseSettings):
-    model: str = "llama3.1:8b-instruct-q4_K_M"
+    model: str = "llama3.2:3b"
     base_url: str = "http://localhost:11434"
     temperature: float = 0.1
     num_ctx: int = 4096
