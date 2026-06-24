@@ -576,20 +576,19 @@ def main():
     for idx, msg in enumerate(st.session_state.messages):
         with st.chat_message(msg["role"]):
             st.markdown(render_text(msg["content"]), unsafe_allow_html=True)
-            mc = msg.get("citations", [])
+            sd = msg.get("source_documents", {})
             dc = msg.get("debug_chunks", [])
-            if mc or dc:
+            if sd or dc:
                 with st.expander("Sources", expanded=False):
-                    if mc:
-                        st.caption("**Citations used in answer:**")
-                        for cit in mc:
-                            pages_str = ", ".join(str(p) for p in cit.get("pages", []))
-                            tag = " ✅" if cit.get("verified") else " ⚠️ unverified"
-                            st.caption(f"  page(s) {pages_str}{tag}")
+                    if sd:
+                        st.caption("**Source documents used:**")
+                        for fname, pages in sd.items():
+                            pages_str = ", ".join(str(p) for p in sorted(pages))
+                            st.caption(f"  `{fname}` — page(s) {pages_str}")
                     if dc:
-                        if mc:
+                        if sd:
                             st.divider()
-                        st.caption("**Retrieved context:**")
+                        st.caption("**Retrieved chunks:**")
                         for i, c in enumerate(dc, 1):
                             st.caption(
                                 f"[{i}] `{c['source']}` p{c['page']} (score={c['score']:.2f})"
@@ -659,14 +658,13 @@ def main():
             debug_chunks = []
             if raw_chunks and source_docs:
                 with st.expander("Sources", expanded=False):
-                    if citations:
-                        st.caption("**Citations used in answer:**")
-                        for cit in citations:
-                            pages_str = ", ".join(str(p) for p in cit.get("pages", []))
-                            tag = " ✅" if cit.get("verified") else " ⚠️ unverified"
-                            st.caption(f"  page(s) {pages_str}{tag}")
+                    if source_docs:
+                        st.caption("**Source documents used:**")
+                        for fname, pages in source_docs.items():
+                            pages_str = ", ".join(str(p) for p in sorted(pages))
+                            st.caption(f"  `{fname}` — page(s) {pages_str}")
                         st.divider()
-                    st.caption("**Retrieved context:**")
+                    st.caption("**Retrieved chunks:**")
                     debug_chunks = [
                         {
                             "source": c.chunk.source_file,

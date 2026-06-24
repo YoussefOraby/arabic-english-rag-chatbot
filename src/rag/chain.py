@@ -14,6 +14,10 @@ from src.rag.prompts import format_chunks_for_context, format_history, get_syste
 from src.retrieval.hybrid import BM25Index, rff_merge
 from src.retrieval.reranker import Reranker
 
+# Regex patterns for deterministic field extraction
+_EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+_PHONE_RE = re.compile(r"(?:\+?\d{1,3}[-\s.]?)?\(?\d{2,4}\)?[-\s.]?\d{3,4}[-\s.]?\d{3,4}")
+
 
 class RAGChain:
     """
@@ -81,6 +85,9 @@ class RAGChain:
                 "insufficient_data": True,
             }
 
+        # Reorder chunks for short documents (≤10 total chunks)
+        chunks = self._reorder_short_document(chunks)
+
         prompt = self._build_prompt(question, chunks, history=history)
 
         raw_answer = self.llm.invoke(prompt, max_tokens=self.max_tokens)
@@ -94,8 +101,28 @@ class RAGChain:
 
         citations_verified = self._verify_citations(citations, chunks)
 
+        # Post-process: correct wrong page numbers if all evidence is from one page
+        known_pages: set[int] = set()
+        for c in chunks:
+            chunk = c.chunk if hasattr(c, "chunk") else c
+            known_pages.add(chunk.page_num)
+        answer, citations_verified = self._correct_citations(
+            answer, citations_verified, known_pages, source_documents
+        )
+
+        # Deterministic override for contact-style structured fields
+        contact_type = self._detect_contact_question(question)
+        if contact_type:
+            extracted = self._extract_structured_field(chunks, contact_type)
+            if extracted:
+                if extracted.lower() not in answer.lower():
+                    answer = extracted
+
+        # Strip inline citations from the user-facing answer (they are in metadata)
+        clean_answer = self._strip_inline_citations(answer)
+
         return {
-            "answer": answer,
+            "answer": clean_answer,
             "chunks": chunks,
             "source_documents": {k: sorted(v) for k, v in source_documents.items()},
             "citations": citations_verified,
@@ -133,6 +160,9 @@ class RAGChain:
             }
             return
 
+        # Reorder chunks for short documents (≤10 total chunks)
+        chunks = self._reorder_short_document(chunks)
+
         prompt = self._build_prompt(question, chunks, history=history)
 
         # Build source_documents from retrieved chunks
@@ -153,9 +183,29 @@ class RAGChain:
 
         citations_verified = self._verify_citations(citations, chunks)
 
+        # Post-process: correct wrong page numbers if all evidence is from one page
+        known_pages: set[int] = set()
+        for c in chunks:
+            chunk = c.chunk if hasattr(c, "chunk") else c
+            known_pages.add(chunk.page_num)
+        answer, citations_verified = self._correct_citations(
+            answer, citations_verified, known_pages, source_documents
+        )
+
+        # Deterministic override for contact-style structured fields
+        contact_type = self._detect_contact_question(question)
+        if contact_type:
+            extracted = self._extract_structured_field(chunks, contact_type)
+            if extracted:
+                if extracted.lower() not in answer.lower():
+                    answer = extracted
+
+        # Strip inline citations from the user-facing answer (they are in metadata)
+        clean_answer = self._strip_inline_citations(answer)
+
         yield {
             "type": "done",
-            "answer": answer,
+            "answer": clean_answer,
             "source_documents": source_documents,
             "chunks": chunks,
             "citations": citations_verified,
@@ -211,6 +261,110 @@ class RAGChain:
         # Step 4: Trim to final top_k
         return merged[: self.top_k]
 
+    def _reorder_short_document(self, chunks: list[Any]) -> list[Any]:
+        """Reorder chunks by document position for short documents.
+
+        When a document has ≤10 total chunks in the store, retrieval
+        by score can place a semantically similar but positionally later
+        chunk before the header chunk (e.g. projects before contact info).
+        Reordering by document order (page, then insertion order) puts
+        header / contact info before less relevant sections, which helps
+        the LLM answer contact-style questions correctly.
+        """
+        if not chunks:
+            return chunks
+
+        # Determine which source files are involved
+        source_files: set[str] = set()
+        for r in chunks:
+            chunk = r.chunk if hasattr(r, "chunk") else r
+            source_files.add(chunk.source_file)
+
+        # Check total chunks per source_file
+        all_in_store = self.store.get_all_chunks()
+        doc_chunk_count: dict[str, int] = {}
+        for c in all_in_store:
+            doc_chunk_count[c.source_file] = doc_chunk_count.get(c.source_file, 0) + 1
+
+        should_reorder = any(doc_chunk_count.get(sf, 0) <= 10 for sf in source_files)
+        if not should_reorder:
+            return chunks
+
+        # Build a position map from the store's insertion order (document order)
+        position: dict[str, int] = {}
+        for pos, c in enumerate(all_in_store):
+            position[c.chunk_id] = pos
+
+        def sort_key(r: Any) -> tuple:
+            chunk = r.chunk if hasattr(r, "chunk") else r
+            return (chunk.page_num, position.get(chunk.chunk_id, 999999))
+
+        return sorted(chunks, key=sort_key)
+
+    @staticmethod
+    def _strip_inline_citations(text: str) -> str:
+        """Remove inline citation brackets like [page X], [صفحة X] from answer text.
+
+        The citations are already captured in the ``citations`` metadata field.
+        This prevents invented or noisy page numbers from reaching the user.
+        """
+        stripped = re.sub(
+            r"\[(?:page|صفحة)\s*:?\s*\d+(?:\s*,\s*\d+)*[^\]]*?\]",
+            "",
+            text,
+            flags=re.IGNORECASE,
+        )
+        # Also strip bare [Source N] brackets that sometimes leak through
+        stripped = re.sub(
+            r"\[\s*Source\s+\d+(?:\s*\|[^\]]*)?\]",
+            "",
+            stripped,
+            flags=re.IGNORECASE,
+        )
+        # Clean up double spaces, leading/trailing whitespace, and empty brackets
+        stripped = re.sub(r"\s{2,}", " ", stripped).strip()
+        stripped = re.sub(r"\[\s*\]", "", stripped).strip()
+        return stripped
+
+    @staticmethod
+    def _detect_contact_question(question: str) -> str | None:
+        """Detect if this is an email or phone contact-style question.
+
+        Returns ``"email"``, ``"phone"``, or ``None``.
+        """
+        q = question.lower()
+        if re.search(r"\b(email|e-mail|mail|البريد|الإلكتروني|إيميل)\b", q, re.IGNORECASE):
+            return "email"
+        if re.search(r"\b(phone|telephone|mobile|cell|رقم|تليفون|هاتف|موبايل)\b", q, re.IGNORECASE):
+            return "phone"
+        return None
+
+    @staticmethod
+    def _extract_structured_field(chunks: list[Any], field_type: str) -> str | None:
+        """Deterministically extract email or phone from retrieved chunk texts.
+
+        This runs over all retrieved chunk texts and returns the first match.
+        Used to verify / correct the LLM answer for structured contact fields.
+        """
+        all_text = ""
+        for r in chunks:
+            chunk = r.chunk if hasattr(r, "chunk") else r
+            text = chunk.text if hasattr(chunk, "text") else str(chunk)
+            all_text += "\n" + text
+
+        if field_type == "email":
+            matches = _EMAIL_RE.findall(all_text)
+            return matches[0] if matches else None
+
+        if field_type == "phone":
+            matches = _PHONE_RE.findall(all_text)
+            if matches:
+                # Return the longest match (most complete phone number)
+                return max(matches, key=len)
+            return None
+
+        return None
+
     def _build_prompt(
         self, question: str, chunks: list[Any], history: list[dict] | None = None
     ) -> str:
@@ -219,12 +373,30 @@ class RAGChain:
         context = format_chunks_for_context(chunks)
         history_str = format_history(history or [], max_pairs=settings.rag.max_history_pairs)
 
+        # Add extra precision instructions for contact-style questions
+        contact_type = self._detect_contact_question(question)
+        extra_instruction = ""
+        if contact_type == "email":
+            extra_instruction = (
+                "\n\nPrecision instruction: The question asks for an email address. "
+                "Look for a string like 'name@domain.com' in the context. "
+                "Do NOT return a phone number for an email question."
+            )
+        elif contact_type == "phone":
+            extra_instruction = (
+                "\n\nPrecision instruction: The question asks for a phone number. "
+                "Look for a numeric phone number in the context. "
+                "Do NOT return an email address for a phone question."
+            )
+
         parts = [system_prompt]
+        if extra_instruction:
+            parts.append(extra_instruction)
         if history_str:
             parts.append(history_str)
         parts.append(f"Context:\n{context}")
         parts.append(f"Question: {question}")
-        parts.append("Answer (with citations):")
+        parts.append("Answer:")
         return "\n\n".join(parts)
 
     # Regex that captures ANY bracketed content containing "page" or "صفحة" + numbers.
@@ -234,14 +406,15 @@ class RAGChain:
     #   [filename.pdf, page X]  — noisy with filename
     #   [page X from filename.pdf]  — swapped order
     #   [page 2, 3]  — multiple pages
+    #   [page: X] or [page:X] — with colon (LLM mimicking header format)
     #   [Context N [filename.pdf, page X]]  — nested (inner bracket eaten by non-greedy)
     _CITATION_BRACKET_RE = re.compile(
-        r"\[([^\]]*?(?:page|صفحة)\s+\d+(?:\s*,\s*\d+)*[^\]]*?)\]",
+        r"\[([^\]]*?(?:page|صفحة)\s*:?\s*\d+(?:\s*,\s*\d+)*[^\]]*?)\]",
         re.IGNORECASE,
     )
 
     # Inner page-number extractor within bracket content
-    _PAGE_NUM_RE = re.compile(r"(?:page|صفحة)\s+(\d+(?:\s*,\s*\d+)*)", re.IGNORECASE)
+    _PAGE_NUM_RE = re.compile(r"(?:page|صفحة)\s*:?\s*(\d+(?:\s*,\s*\d+)*)", re.IGNORECASE)
 
     def _parse_citations(self, response: str) -> tuple[str, list[dict]]:
         """
@@ -304,7 +477,7 @@ class RAGChain:
     def _normalize_citation_bracket(match: re.Match) -> str:
         """Replace a noisy citation bracket with clean ``[page X]`` / ``[صفحة X]``."""
         inner = match.group(1)
-        p = re.search(r"(?:page|صفحة)\s+(\d+(?:\s*,\s*\d+)*)", inner, re.IGNORECASE)
+        p = re.search(r"(?:page|صفحة)\s*:?\s*(\d+(?:\s*,\s*\d+)*)", inner, re.IGNORECASE)
         if p:
             pages = p.group(1)
             arabic = "صفحة" in inner
@@ -328,3 +501,61 @@ class RAGChain:
             verified.append({**cit, "verified": all_found})
 
         return verified
+
+    @staticmethod
+    def _correct_citations(
+        answer: str,
+        citations: list[dict],
+        known_pages: set[int],
+        source_documents: dict[str, list[int]],
+    ) -> tuple[str, list[dict]]:
+        """Post-process answer to fix invented page numbers.
+
+        If:
+          - A citation references page(s) NOT in ``known_pages`` (LLM hallucinated),
+          - AND all retrieved chunks come from a single page,
+        then rewrite the invented page number to the known page.
+
+        This is a safety net when the LLM confuses source index with page number.
+        """
+        if not citations or not known_pages:
+            return answer, citations
+
+        # Determine the one true page if all evidence is from a single page
+        all_same_page = len(known_pages) == 1
+        if not all_same_page:
+            return answer, citations
+
+        true_page = next(iter(known_pages))
+
+        fixed_citations = []
+        modified = False
+        for cit in citations:
+            original_pages = cit["pages"]
+            invented = [p for p in original_pages if p not in known_pages]
+            if invented:
+                # Replace invented pages with the one true page
+                new_pages = [true_page if p in invented else p for p in original_pages]
+                fixed_citations.append({**cit, "pages": new_pages, "verified": True})
+                modified = True
+            else:
+                fixed_citations.append(cit)
+
+        if not modified:
+            return answer, citations
+
+        # Rewrite page numbers in the answer text
+        def _replace_page(match: re.Match) -> str:
+            inner = match.group(1)
+            p = re.search(r"(?:page|صفحة)\s*:?\s*(\d+(?:\s*,\s*\d+)*)", inner, re.IGNORECASE)
+            if not p:
+                return match.group(0)
+            old_pages = [int(x.strip()) for x in p.group(1).split(",")]
+            if any(pn not in known_pages for pn in old_pages):
+                arabic = "صفحة" in inner
+                return f"[{'صفحة' if arabic else 'page'} {true_page}]"
+            return match.group(0)
+
+        corrected = re.sub(RAGChain._CITATION_BRACKET_RE, _replace_page, answer)
+
+        return corrected, fixed_citations

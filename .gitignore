@@ -59,3 +59,8 @@ pip-wheel-metadata/
 
 # === Local model cache (if any) ===
 models/
+
+# === Evaluation outputs (generated per run) ===
+evaluation/runs/
+evaluation/tmp/
+

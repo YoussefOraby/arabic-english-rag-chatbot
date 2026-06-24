@@ -1,0 +1,673 @@
+[
+  {
+    "id": "rag-en-001",
+    "group": "research_paper",
+    "question": "What are the three RAG paradigms discussed in the paper?",
+    "language": "english",
+    "expected_answer_summary": "Naive RAG, Advanced RAG, Modular RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "document_id": "synthetic_rag_paper",
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Naive RAG",
+      "Advanced RAG",
+      "Modular RAG"
+    ]
+  },
+  {
+    "id": "rag-en-002",
+    "group": "research_paper",
+    "question": "What is Naive RAG?",
+    "language": "english",
+    "expected_answer_summary": "Naive RAG is the classic RAG framework with a retrieve-then-generate pipeline including index, retrieve and generate stages",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Naive RAG",
+      "indexing",
+      "retrieval",
+      "generation"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-en-003",
+    "group": "research_paper",
+    "question": "What is Advanced RAG?",
+    "language": "english",
+    "expected_answer_summary": "Advanced RAG introduces pre-retrieval, retrieval and post-retrieval improvements to address limitations of Naive RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Advanced RAG",
+      "pre-retrieval",
+      "post-retrieval"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-en-004",
+    "group": "research_paper",
+    "question": "What is Modular RAG?",
+    "language": "english",
+    "expected_answer_summary": "Modular RAG adopts a modular architecture with trainable and flexible components enabling task-specific customization and pattern recombination",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3,
+      4
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Modular RAG",
+      "modular",
+      "flexible"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-en-005",
+    "group": "research_paper",
+    "question": "What challenges does RAG face?",
+    "language": "english",
+    "expected_answer_summary": "RAG faces challenges including missing content, not selected, not merged, hallucination, and relevance mismatch",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      15,
+      16,
+      17
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "missing content",
+      "hallucination"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-en-006",
+    "group": "research_paper",
+    "question": "What does the paper say about evaluation of RAG systems?",
+    "language": "english",
+    "expected_answer_summary": "The paper discusses evaluation metrics, datasets and benchmarks for assessing RAG systems including answer quality and retrieval accuracy",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      12,
+      13
+    ],
+    "should_answer": true,
+    "question_type": "methodology",
+    "required_keywords": [
+      "evaluation",
+      "metrics",
+      "benchmarks"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-en-007",
+    "group": "research_paper",
+    "question": "Compare Naive RAG and Advanced RAG.",
+    "language": "english",
+    "expected_answer_summary": "Naive RAG is the basic retrieve-then-generate pipeline while Advanced RAG adds pre-retrieval and post-retrieval improvements for better quality",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3
+    ],
+    "should_answer": true,
+    "question_type": "comparison",
+    "required_keywords": [
+      "Naive RAG",
+      "Advanced RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-en-008",
+    "group": "research_paper",
+    "question": "What retrieval methods are discussed, such as dense retrieval, sparse BM25 retrieval, and hybrid retrieval?",
+    "language": "english",
+    "expected_answer_summary": "The paper discusses dense retrieval, sparse retrieval (BM25), hybrid retrieval and reranking methods for RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      9,
+      10,
+      11
+    ],
+    "should_answer": true,
+    "question_type": "methodology",
+    "required_keywords": [
+      "dense retrieval",
+      "BM25",
+      "hybrid"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-ar-001",
+    "group": "research_paper",
+    "question": "ما هي أنواع RAG الثلاثة التي يناقشها البحث؟",
+    "language": "arabic",
+    "expected_answer_summary": "Naive RAG وAdvanced RAG وModular RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Naive RAG",
+      "Advanced RAG",
+      "Modular RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-ar-002",
+    "group": "research_paper",
+    "question": "ما المقصود بـ Naive RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "Naive RAG هو إطار RAG الكلاسيكي الذي يعتمد على خط أنابيب استرجاع ثم توليد يتضمن مراحل الفهرسة والاسترجاع والتوليد",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Naive RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-ar-003",
+    "group": "research_paper",
+    "question": "ما هو Advanced RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "Advanced RAG يقدم تحسينات ما قبل الاسترجاع وأثناء الاسترجاع وما بعد الاسترجاع لمعالجة قيود Naive RAG",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Advanced RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-ar-004",
+    "group": "research_paper",
+    "question": "ما هو Modular RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "Modular RAG يتبنى بنية معيارية بمكونات قابلة للتدريب ومرنة تتيح التخصيص حسب المهمة وإعادة تركيب الأنماط",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3,
+      4
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Modular RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-ar-005",
+    "group": "research_paper",
+    "question": "ما التحديات التي تواجه RAG؟",
+    "language": "arabic",
+    "expected_answer_summary": "تواجه RAG تحديات مثل المحتوى المفقود وعدم التحديد المناسب وعدم الدمج والهلوسة وعدم تطابق الصلة",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      15,
+      16,
+      17
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "تحديات",
+      "RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-mixed-001",
+    "group": "research_paper",
+    "question": "Explain Modular RAG بالعربي.",
+    "language": "mixed",
+    "expected_answer_summary": "Modular RAG is a modular architecture with flexible components that can be customized per task",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3,
+      4
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "Modular RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-mixed-002",
+    "group": "research_paper",
+    "question": "What is the difference between Naive RAG and Advanced RAG اشرح بالعربية؟",
+    "language": "mixed",
+    "expected_answer_summary": "Naive RAG is the basic pipeline while Advanced RAG adds pre-retrieval and post-retrieval improvements",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      2,
+      3
+    ],
+    "should_answer": true,
+    "question_type": "comparison",
+    "required_keywords": [
+      "Naive RAG",
+      "Advanced RAG"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "rag-mixed-003",
+    "group": "research_paper",
+    "question": "ما هي التحديات التي facing RAG؟",
+    "language": "mixed",
+    "expected_answer_summary": "RAG faces challenges including missing content, not selected, not merged, hallucination and relevance issues",
+    "expected_document": "2312.10997v5.pdf",
+    "expected_pages": [
+      15,
+      16,
+      17
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "RAG",
+      "challenges"
+    ],
+    "document_id": "synthetic_rag_paper"
+  },
+  {
+    "id": "resume-en-001",
+    "group": "synthetic_resume",
+    "question": "What is the candidate's full name?",
+    "language": "english",
+    "expected_answer_summary": "Ahmed Hassan",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "Ahmed Hassan"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-en-002",
+    "group": "synthetic_resume",
+    "question": "What is the email address in this resume?",
+    "language": "english",
+    "expected_answer_summary": "ahmed@example.com",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "ahmed@example.com"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-en-003",
+    "group": "synthetic_resume",
+    "question": "What is the phone number in this resume?",
+    "language": "english",
+    "expected_answer_summary": "01000000000",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "01000000000"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-en-004",
+    "group": "synthetic_resume",
+    "question": "What university did the candidate graduate from?",
+    "language": "english",
+    "expected_answer_summary": "Arab Academy for Science, Technology and Maritime Transport",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "Arab Academy",
+      "Maritime Transport"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-en-005",
+    "group": "synthetic_resume",
+    "question": "What degree did the candidate earn?",
+    "language": "english",
+    "expected_answer_summary": "B.Sc. in Computer Engineering",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "Computer Engineering"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-en-006",
+    "group": "synthetic_resume",
+    "question": "List all projects mentioned in this resume.",
+    "language": "english",
+    "expected_answer_summary": "Arabic-English RAG Chatbot, Churn Prediction Pipeline, Email Classification using Llama, Service Desk Ticket Classification",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "list",
+    "required_keywords": [
+      "Arabic-English RAG Chatbot",
+      "Churn Prediction",
+      "Email Classification",
+      "Service Desk"
+    ],
+    "forbidden_keywords": [
+      "university hackathon",
+      "research paper on efficient NLP",
+      "AWS Solutions Architect"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-en-007",
+    "group": "synthetic_resume",
+    "question": "What programming skills does the candidate have?",
+    "language": "english",
+    "expected_answer_summary": "Python, PyTorch, FastAPI, Docker, ChromaDB",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "list",
+    "required_keywords": [
+      "Python",
+      "PyTorch",
+      "FastAPI",
+      "Docker",
+      "ChromaDB"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-ar-001",
+    "group": "synthetic_resume",
+    "question": "ما اسم المرشح الكامل؟",
+    "language": "arabic",
+    "expected_answer_summary": "Ahmed Hassan",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "Ahmed Hassan"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-ar-002",
+    "group": "synthetic_resume",
+    "question": "ما هو البريد الإلكتروني في هذه السيرة الذاتية؟",
+    "language": "arabic",
+    "expected_answer_summary": "ahmed@example.com",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "ahmed@example.com"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-ar-003",
+    "group": "synthetic_resume",
+    "question": "ما رقم الهاتف في هذه السيرة الذاتية؟",
+    "language": "arabic",
+    "expected_answer_summary": "01000000000",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "identity",
+    "required_keywords": [
+      "01000000000"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-ar-004",
+    "group": "synthetic_resume",
+    "question": "قم بسرد جميع المشاريع المذكورة في هذه السيرة الذاتية.",
+    "language": "arabic",
+    "expected_answer_summary": "Arabic-English RAG Chatbot, Churn Prediction Pipeline, Email Classification using Llama, Service Desk Ticket Classification",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "list",
+    "required_keywords": [
+      "Arabic-English RAG Chatbot",
+      "Churn Prediction",
+      "Email Classification",
+      "Service Desk"
+    ],
+    "forbidden_keywords": [
+      "university hackathon",
+      "research paper on efficient NLP",
+      "AWS Solutions Architect"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "resume-mixed-001",
+    "group": "synthetic_resume",
+    "question": "What projects are listed in this resume اذكرها بالعربية؟",
+    "language": "mixed",
+    "expected_answer_summary": "Arabic-English RAG Chatbot, Churn Prediction Pipeline, Email Classification using Llama, Service Desk Ticket Classification",
+    "expected_document": null,
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "list",
+    "required_keywords": [
+      "Arabic-English RAG Chatbot",
+      "Churn Prediction",
+      "Email Classification",
+      "Service Desk"
+    ],
+    "document_id": "golden_resume"
+  },
+  {
+    "id": "unsupported-001",
+    "group": "unsupported",
+    "question": "What is the expected salary for this candidate?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-002",
+    "group": "unsupported",
+    "question": "What is the candidate's home address?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-003",
+    "group": "unsupported",
+    "question": "Who will be the candidate's future employer?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-004",
+    "group": "unsupported",
+    "question": "What is the candidate's favorite programming language?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-005",
+    "group": "unsupported",
+    "question": "What is the capital of Japan?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-006",
+    "group": "unsupported",
+    "question": "Who won the 2022 FIFA World Cup?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-007",
+    "group": "unsupported",
+    "question": "ما هي عاصمة مصر؟",
+    "language": "arabic",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-008",
+    "group": "unsupported",
+    "question": "ما هو الراتب المتوقع لهذا المرشح؟",
+    "language": "arabic",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-009",
+    "group": "unsupported",
+    "question": "Provide the exact source code repository URL for the RAG project.",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-010",
+    "group": "unsupported",
+    "question": "What GPU model was used for training?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  },
+  {
+    "id": "unsupported-011",
+    "group": "unsupported",
+    "question": "What is the salary of the first author?",
+    "language": "english",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "document_id": null
+  }
+]
