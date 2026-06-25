@@ -83,7 +83,7 @@ ui:
   # Max chat history messages to display
   max_history: 10
   # When true and no file is uploaded, clear all documents on session start
-  clear_documents_when_no_upload: true
+  clear_documents_when_no_upload: false
 
 # === Document Management ===
 document:
