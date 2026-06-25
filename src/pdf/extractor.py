@@ -1,6 +1,7 @@
 """PDF text extraction using PyMuPDF (fitz).
 Extracts text from each page, handling Arabic RTL and CJK text correctly."""
 
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -42,6 +43,10 @@ def extract_pages(pdf_path: Path) -> list[PageText]:
         page = doc.load_page(page_num)
         # "text" mode preserves reading order and handles RTL correctly
         text = page.get_text("text")
+        # Normalize Arabic Presentation Forms (U+FE70-U+FEFF) to standard
+        # Arabic block (U+0600-U+06FF), which PyMuPDF's TextWriter may
+        # produce when rendering RTL text with a font like Tahoma.
+        text = unicodedata.normalize("NFKC", text)
         # Strip leading/trailing whitespace per page
         text = text.strip()
         pages.append(PageText(page_num=page_num + 1, text=text))

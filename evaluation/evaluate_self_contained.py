@@ -42,6 +42,7 @@ TMP_DIR = BASE_DIR / "tmp"
 SYNTHETIC_DOCS: dict[str, Path] = {
     "golden_resume": FIXTURES_DIR / "golden_resume.pdf",
     "synthetic_rag_paper": FIXTURES_DIR / "synthetic_rag_paper.pdf",
+    "synthetic_arabic_policy": FIXTURES_DIR / "synthetic_arabic_policy.pdf",
 }
 
 KEYWORD_THRESHOLD = 1.0

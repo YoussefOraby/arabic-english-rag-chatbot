@@ -41,6 +41,56 @@ def truncate_text(text: str, max_length: int = 100) -> str:
     return text[: max_length - 3] + "..."
 
 
+# Arabic diacritics (tashkeel) to strip for retrieval normalization
+_ARABIC_DIACRITICS = dict.fromkeys(
+    ord(c) for c in "\u064b\u064c\u064d\u064e\u064f\u0650\u0651\u0652\u0670\u0653\u0654\u0655"
+)
+_TATWEEL = "\u0640"
+
+
+def normalize_arabic_for_retrieval(text: str) -> str:
+    """Normalize Arabic text for retrieval matching only (not for display).
+
+    Operations:
+      - Strip diacritics (tashkeel)
+      - Remove tatweel (kashida)
+      - Unify alef forms: أ إ آ → ا
+      - Unify yeh: ى → ي
+      - Unify teh marbuta: ة → ه
+    """
+    text = text.translate(_ARABIC_DIACRITICS)
+    text = text.replace(_TATWEEL, "")
+    text = text.replace("\u0623", "\u0627").replace("\u0625", "\u0627").replace("\u0622", "\u0627")
+    text = text.replace("\u0649", "\u064a")  # ى → ي
+    text = text.replace("\u0629", "\u0647")  # ة → ه
+    return text
+
+
+def extract_arabic_keywords(text: str) -> set[str]:
+    """Extract significant Arabic keywords from text for retrieval boosting.
+
+    Returns normalized (for retrieval) keywords from the text.
+    """
+    if not text:
+        return set()
+    norm = normalize_arabic_for_retrieval(text)
+    # Arabic "stop words" to filter out
+    stop_words = {
+        "في", "من", "إلى", "عن", "على", "مع", "هل", "ما", "هو", "هي",
+        "هم", "هن", "كان", "هذا", "هذه", "ذلك", "تلك", "ال", "التي",
+        "الذين", "الذي", "ل", "ب", "ك", "و", "ا", "ف", "س",
+        "قد", "لم", "لن", "ان", "أن", "إن", "لا", "ما",
+    }
+    tokens = set()
+    for word in norm.split():
+        word = word.strip()
+        # Remove leading/trailing non-word chars
+        word = word.strip(".,:;!?()[]{}\"'«»؟")
+        if len(word) > 1 and word not in stop_words:
+            tokens.add(word)
+    return tokens
+
+
 def is_arabic_text(text: str) -> bool:
     """
     Heuristic: check if text contains Arabic characters.

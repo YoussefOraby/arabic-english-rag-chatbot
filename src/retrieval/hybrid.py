@@ -4,6 +4,7 @@ from rank_bm25 import BM25Okapi
 
 from src.embeddings.store import ChromaStore, SearchResult
 from src.pdf.chunker import Chunk
+from src.utils.helpers import normalize_arabic_for_retrieval
 
 
 class BM25Index:
@@ -83,9 +84,13 @@ class BM25Index:
         return self.bm25 is not None
 
     def _tokenize(self, text: str) -> list[str]:
-        """Simple whitespace + punctuation tokenizer (works for Ar + En)."""
+        """Simple whitespace + punctuation tokenizer (works for Ar + En).
+
+        Arabic text is NFKC-normalized so corpus tokens match normalized query tokens.
+        """
         import re
 
+        text = normalize_arabic_for_retrieval(text)
         tokens = re.findall(r"\w+", text.lower())
         return [t for t in tokens if len(t) > 1]
 

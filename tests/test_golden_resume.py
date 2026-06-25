@@ -504,3 +504,114 @@ class TestContactFieldExtraction:
 
         assert RAGChain._detect_contact_question("What is the candidate's full name?") is None
         assert RAGChain._detect_contact_question("What university did they attend?") is None
+
+
+# ── Arabic policy PDF tests ──────────────────────────────────────────
+
+
+class TestArabicNormalization:
+    """Tests for Arabic normalization utilities."""
+
+    def test_normalize_alef_forms(self):
+        """All alef forms should normalize to bare alef."""
+        from src.utils.helpers import normalize_arabic_for_retrieval
+
+        assert normalize_arabic_for_retrieval("أحمد") == "احمد"
+        assert normalize_arabic_for_retrieval("إحسان") == "احسان"
+        assert normalize_arabic_for_retrieval("آدم") == "ادم"
+        assert normalize_arabic_for_retrieval("أ إ آ") == "ا ا ا"
+
+    def test_normalize_yeh(self):
+        """Alif maqsura (ى) should normalize to yeh (ي)."""
+        from src.utils.helpers import normalize_arabic_for_retrieval
+
+        assert normalize_arabic_for_retrieval("مستشفى") == "مستشفي"
+        assert normalize_arabic_for_retrieval("فتى") == "فتي"
+
+    def test_normalize_teh_marbuta(self):
+        """Teh marbuta (ة) should normalize to heh (ه)."""
+        from src.utils.helpers import normalize_arabic_for_retrieval
+
+        assert normalize_arabic_for_retrieval("فترة") == "فتره"
+        assert normalize_arabic_for_retrieval("مكتبة") == "مكتبه"
+
+    def test_remove_diacritics(self):
+        """Tashkeel (diacritics) should be removed."""
+        from src.utils.helpers import normalize_arabic_for_retrieval
+
+        assert normalize_arabic_for_retrieval("فَتْرَة") == "فتره"
+        assert normalize_arabic_for_retrieval("سَاعَة") == "ساعه"
+
+    def test_remove_tatweel(self):
+        """Tatweel/kashida should be removed."""
+        from src.utils.helpers import normalize_arabic_for_retrieval
+
+        assert normalize_arabic_for_retrieval("ســـاعة") == "ساعه"
+        assert "ـ" not in normalize_arabic_for_retrieval("مــــدة")
+
+    def test_extract_arabic_keywords_removes_stop_words(self):
+        """extract_arabic_keywords should filter out common stop words."""
+        from src.utils.helpers import extract_arabic_keywords
+
+        kws = extract_arabic_keywords("ما هو عقد العمل")
+        assert "عقد" in kws
+        assert "العمل" in kws
+        assert "ما" not in kws
+        assert "هو" not in kws
+
+    def test_extract_arabic_keywords_returns_set(self):
+        """extract_arabic_keywords should return a set."""
+        from src.utils.helpers import extract_arabic_keywords
+
+        kws = extract_arabic_keywords("ما هي مدة فترة التجربة للعامل")
+        # Normalized forms (ة→ه, ى→ي)
+        assert "فتره" in kws
+        assert "التجربه" in kws
+        assert kws == set(kws)  # no duplicates (it's a set)
+
+
+class TestArabicPolicyPDF:
+    """Tests for synthetic Arabic policy PDF extractability and chunking."""
+
+    def test_arabic_policy_pdf_exists(self):
+        """synthetic_arabic_policy.pdf should exist and be non-empty."""
+        pdf_path = Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "synthetic_arabic_policy.pdf"
+        assert pdf_path.exists(), "synthetic_arabic_policy.pdf not found"
+        assert pdf_path.stat().st_size > 1000
+
+    def test_arabic_policy_pdf_extraction(self):
+        """PDF should extract text with significant Arabic content."""
+        from src.pdf.extractor import extract_pages
+
+        pdf_path = Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "synthetic_arabic_policy.pdf"
+        pages = extract_pages(pdf_path)
+        assert len(pages) >= 1
+        total_ar = sum(
+            1 for p in pages for c in p.text if "\u0600" <= c <= "\u06ff"
+        )
+        assert total_ar > 500, f"Only {total_ar} Arabic chars in PDF"
+
+    def test_arabic_policy_pdf_chunking(self):
+        """PDF should chunk into at least 4 segments."""
+        from src.config import settings
+        from src.pdf.chunker import chunk_pages
+        from src.pdf.extractor import extract_pages
+
+        pdf_path = Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "synthetic_arabic_policy.pdf"
+        pages = extract_pages(pdf_path)
+        chunks = chunk_pages(pages, settings.pdf, source_file="synthetic_arabic_policy.pdf")
+        assert len(chunks) >= 4, f"Only {len(chunks)} chunks"
+
+    def test_arabic_policy_contains_expected_keywords(self):
+        """Chunk text should contain expected content keywords."""
+        from src.config import settings
+        from src.pdf.chunker import chunk_pages
+        from src.pdf.extractor import extract_pages
+
+        pdf_path = Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "synthetic_arabic_policy.pdf"
+        pages = extract_pages(pdf_path)
+        chunks = chunk_pages(pages, settings.pdf, source_file="synthetic_arabic_policy.pdf")
+
+        all_text = " ".join(c.text for c in chunks)
+        for kw in ["عقد العمل", "فترة التجربة", "إجازة سنوية", "ساعات العمل"]:
+            assert kw in all_text, f"Missing keyword: {kw}"

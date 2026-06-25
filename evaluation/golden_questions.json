@@ -669,5 +669,100 @@
     "should_answer": false,
     "question_type": "unsupported",
     "document_id": null
+  },
+  {
+    "id": "ar-policy-001",
+    "group": "arabic_policy",
+    "question": "ما هو عقد العمل؟",
+    "language": "arabic",
+    "expected_answer_summary": "عقد العمل هو عقد بين صاحب العمل والعامل، يتعهد فيه العامل أن يعمل تحت إدارة صاحب العمل أو إشرافه مقابل أجر.",
+    "expected_document": "synthetic_arabic_policy.pdf",
+    "document_id": "synthetic_arabic_policy",
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "عقد العمل",
+      "صاحب العمل",
+      "العامل",
+      "أجر"
+    ]
+  },
+  {
+    "id": "ar-policy-002",
+    "group": "arabic_policy",
+    "question": "ما هي مدة فترة التجربة للعامل؟",
+    "language": "arabic",
+    "expected_answer_summary": "فترة التجربة لا تزيد على 90 يوماً، ويجوز باتفاق مكتوب تمديدها بشرط ألا تزيد على 90 يوماً إضافية.",
+    "expected_document": "synthetic_arabic_policy.pdf",
+    "document_id": "synthetic_arabic_policy",
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "90",
+      "فترة التجربة",
+      "تمديد"
+    ]
+  },
+  {
+    "id": "ar-policy-003",
+    "group": "arabic_policy",
+    "question": "ما هي مدة الإجازة السنوية للعامل؟",
+    "language": "arabic",
+    "expected_answer_summary": "إجازة سنوية بأجر كامل لا تقل عن 21 يوماً، وتزيد إلى 30 يوماً إذا أمضى العامل خمس سنوات متصلة في خدمة صاحب العمل.",
+    "expected_document": "synthetic_arabic_policy.pdf",
+    "document_id": "synthetic_arabic_policy",
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "21",
+      "إجازة سنوية",
+      "30",
+      "خمس سنوات"
+    ]
+  },
+  {
+    "id": "ar-policy-004",
+    "group": "arabic_policy",
+    "question": "كم عدد ساعات العمل العادية؟ وهل تختلف في رمضان؟",
+    "language": "arabic",
+    "expected_answer_summary": "لا يجوز تشغيل العامل أكثر من 8 ساعات في اليوم أو 48 ساعة في الأسبوع. وفي رمضان للمسلمين تخفض إلى 6 ساعات في اليوم أو 36 ساعة في الأسبوع.",
+    "expected_document": "synthetic_arabic_policy.pdf",
+    "document_id": "synthetic_arabic_policy",
+    "expected_pages": [
+      1
+    ],
+    "should_answer": true,
+    "question_type": "factual",
+    "required_keywords": [
+      "8 ساعات",
+      "48 ساعة",
+      "6 ساعات",
+      "36 ساعة",
+      "رمضان"
+    ]
+  },
+  {
+    "id": "ar-policy-005",
+    "group": "arabic_policy",
+    "question": "ما اسم الرئيس التنفيذي لشركة OpenAI؟",
+    "language": "arabic",
+    "expected_answer_summary": "Insufficient data to verify from the uploaded documents.",
+    "expected_document": null,
+    "document_id": "synthetic_arabic_policy",
+    "expected_pages": [],
+    "should_answer": false,
+    "question_type": "unsupported",
+    "required_keywords": [
+      "Insufficient data"
+    ]
   }
 ]

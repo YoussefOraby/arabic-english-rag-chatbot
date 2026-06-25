@@ -13,6 +13,7 @@ from src.llm.base import BaseLLM
 from src.rag.prompts import format_chunks_for_context, format_history, get_system_prompt
 from src.retrieval.hybrid import BM25Index, rff_merge
 from src.retrieval.reranker import Reranker
+from src.utils.helpers import is_arabic_text, normalize_arabic_for_retrieval, extract_arabic_keywords
 
 # Regex patterns for deterministic field extraction
 _EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
@@ -212,6 +213,12 @@ class RAGChain:
             "insufficient_data": insufficient,
         }
 
+    def _normalize_query(self, question: str) -> str:
+        """Normalize query for retrieval — Arabic normalization if Arabic, otherwise identity."""
+        if is_arabic_text(question):
+            return normalize_arabic_for_retrieval(question)
+        return question
+
     def _retrieve(self, question: str, document_id: str | None = None) -> list[Any]:
         """Retrieve relevant chunks — dense only, hybrid (BM25+RRF), or hybrid+rerank.
 
@@ -219,6 +226,9 @@ class RAGChain:
             question: The user query
             document_id: Optional — restrict retrieval to a single document
         """
+
+        # Normalize query for Arabic retrieval (strip diacritics/tatweel, unify alef)
+        search_query = self._normalize_query(question)
 
         # Determine how many candidates to fetch before reranking / fusion
         if settings.retrieval.enable_hybrid or settings.retrieval.enable_reranker:
@@ -228,7 +238,7 @@ class RAGChain:
 
         # Step 1: Dense retrieval (always)
         dense_results = self.store.similarity_search(
-            question,
+            search_query,
             k=candidate_k,
             score_threshold=settings.retrieval.score_threshold,
             document_id=document_id,
@@ -240,7 +250,7 @@ class RAGChain:
                 self.rebuild_index()
 
             if self._bm25 is not None and self._bm25.is_ready:
-                bm25_results = self._bm25.search(question, k=candidate_k, document_id=document_id)
+                bm25_results = self._bm25.search(search_query, k=candidate_k, document_id=document_id)
                 merged = rff_merge(
                     dense_results,
                     bm25_results,
@@ -256,10 +266,16 @@ class RAGChain:
         if settings.retrieval.enable_reranker and merged:
             if self._reranker is None:
                 self._reranker = Reranker()
-            merged = self._reranker.rerank(question, merged, top_k=self.top_k)
+            merged = self._reranker.rerank(search_query, merged, top_k=self.top_k)
 
         # Step 4: Trim to final top_k
-        return merged[: self.top_k]
+        trimmed = merged[: self.top_k]
+
+        # Step 5: Keyword-match reordering for Arabic questions
+        if is_arabic_text(question):
+            trimmed = self._reorder_by_keywords(question, trimmed)
+
+        return trimmed
 
     def _reorder_short_document(self, chunks: list[Any]) -> list[Any]:
         """Reorder chunks by document position for short documents.
@@ -300,6 +316,36 @@ class RAGChain:
             return (chunk.page_num, position.get(chunk.chunk_id, 999999))
 
         return sorted(chunks, key=sort_key)
+
+    @staticmethod
+    def _reorder_by_keywords(question: str, chunks: list[Any]) -> list[Any]:
+        """Reorder retrieved chunks so those containing question keywords appear first.
+
+        For Arabic questions, extracts significant keywords from the question
+        and prioritizes chunks that contain them. Within keyword-matched chunks,
+        preserves original rank order.
+        """
+        if not chunks:
+            return chunks
+
+        keywords = extract_arabic_keywords(question)
+        if not keywords:
+            return chunks
+
+        def match_count(r: Any) -> int:
+            chunk = r.chunk if hasattr(r, "chunk") else r
+            text = chunk.text if hasattr(chunk, "text") else str(chunk)
+            text_norm = normalize_arabic_for_retrieval(text)
+            return sum(1 for kw in keywords if kw in text_norm)
+
+        # Separate into matched and unmatched, preserving relative order within each group
+        matched = [r for r in chunks if match_count(r) > 0]
+        unmatched = [r for r in chunks if match_count(r) == 0]
+
+        # Sort matched by (descending match_count, original score descending)
+        matched.sort(key=lambda r: (match_count(r), r.score if hasattr(r, "score") else 0), reverse=True)
+
+        return matched + unmatched
 
     @staticmethod
     def _strip_inline_citations(text: str) -> str:
