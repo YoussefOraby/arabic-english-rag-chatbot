@@ -7,25 +7,26 @@
 
 > Ask questions about your Arabic and English PDF documents. Get cited answers with `[page X]` from your files — powered by local LLM (Ollama), multilingual embeddings, and ChromaDB.
 
+> **Why this project?** Built as a portfolio project targeting Egyptian AI engineering roles. Arabic NLP support is a key differentiator — companies like Valeo Egypt, Ericsson Egypt, and Capgemini Cairo explicitly list Arabic NLP in junior AI roles. This project demonstrates end-to-end RAG implementation with bilingual support.
+
 ---
 
 ## Demo Examples
 
-**English Q&A:**
+**English Q&A (pyramids.pdf):**
 ```
-Q: What is a black hole event horizon?
-A: The event horizon is the boundary around a black hole
-   beyond which nothing, not even light, can escape [page 1].
-   Once matter crosses this point, it is pulled toward the
-   singularity [page 2].
+Q: What is the Great Pyramid of Giza?
+A: The Great Pyramid of Giza is the largest Egyptian pyramid,
+   built as a tomb for Pharaoh Khufu [page 1]. It was the
+   tallest man-made structure for over 3,800 years [page 3].
 ```
 
-**Arabic Q&A:**
+**Arabic Q&A (valeo-code-of-business-ethics-2023_ar.pdf):**
 ```
-Q: ما هو الذكاء الاصطناعي؟
-A: الذكاء الاصطناعي هو مجال من علوم الكمبيوتر يهدف إلى
-   إنشاء أنظمة قادرة على أداء مهام تتطلب ذكاءً بشريًا [page 1].
-   تشمل التطبيقات تعلم الآلة ومعالجة اللغة الطبيعية [page 2].
+Q: ما هي قيم شركة فاليو؟
+A: قيم شركة فاليو تشمل: التجارية بزناهة، ثقافة الأخلاقيات
+   والامتثال، الحفاظ على معاييرنا العالية، المنافسة الشريفة
+   [page 2,4,18,22].
 ```
 
 **Unsupported question:**
@@ -46,12 +47,10 @@ A: لا أعرف إجابة هذا السؤال بناءً على المستند
 
 | Metric | Value |
 |--------|-------|
-| Pass rate | 50% (11/22) |
-| Avg semantic score | 0.729 |
-| Source page accuracy | 83.33% |
-| Citation verification | 100% |
-| Unsupported accuracy | 100% |
-| Avg latency | 11.92s |
+| English questions answered | 3/3 (100%) |
+| Arabic questions answered | 3/3 (100%) |
+| Avg latency (English) | ~25s |
+| Avg latency (Arabic) | ~17s |
 
 ---
 
