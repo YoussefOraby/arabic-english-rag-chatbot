@@ -60,11 +60,26 @@ A: لا أعرف إجابة هذا السؤال بناءً على المستند
 - **Real-time streaming** — tokens appear as they're generated (no waiting)
 - **Semantic chunking** — sentence-boundary + embedding similarity for coherent chunks
 - **Cited answers** — every response includes `[page X]` source citations
+- **Hybrid search** — BM25 + ChromaDB dense search combined via RRF fusion for better Arabic retrieval
 - **PDF upload in UI** — drag-and-drop new PDFs, instantly indexed
 - **Chat history** — conversations auto-saved, load previous sessions
 - **RTL support** — Arabic text renders right-aligned properly
 - **REST API** — FastAPI backend with `/query`, `/health`, `/stats` endpoints
 - **100% local** — no cloud dependencies, runs on your machine with Ollama
+
+---
+
+## Project Journey
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Environment setup | ✅ |
+| 2 | English PDF extraction + chunking (pyramids.pdf) | ✅ |
+| 3 | Multilingual embeddings + ChromaDB | ✅ |
+| 4 | RAG chain + Ollama local LLM | ✅ |
+| 5 | Streamlit UI with streaming + citations | ✅ |
+| 6 | Arabic RAG pipeline (Valeo ethics document) | ✅ |
+| 7 | PDF upload feature + bilingual testing | ✅ |
 
 ---
 
@@ -263,8 +278,8 @@ All parameters in `config/config.yaml`:
 | `vector_store.collection_name` | `documents` | ChromaDB collection |
 | `llm.ollama.model` | `llama3.2:3b` | Ollama model |
 | `llm.ollama.temperature` | `0.1` | LLM temperature |
-| `retrieval.top_k` | `4` | Chunks retrieved per query |
-| `retrieval.score_threshold` | `0.3` | Minimum similarity score |
+| `retrieval.top_k` | `6` | Chunks retrieved per query |
+| `retrieval.score_threshold` | `0.2` | Minimum similarity score |
 | `rag.max_tokens` | `512` | Max tokens per answer |
 
 ---
