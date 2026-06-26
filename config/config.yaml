@@ -53,8 +53,8 @@ llm:
 
 # === Retrieval ===
 retrieval:
-  top_k: 4                    # Final chunks per query (after reranking)
-  score_threshold: 0.3        # Minimum similarity score (0-1)
+  top_k: 6                    # Final chunks per query (after reranking)
+  score_threshold: 0.2        # Minimum similarity score (0-1)
   # Return page citations in metadata
   include_metadata: true
   # Hybrid search (BM25 + dense)
@@ -83,7 +83,7 @@ ui:
   # Max chat history messages to display
   max_history: 10
   # When true and no file is uploaded, clear all documents on session start
-  clear_documents_when_no_upload: false
+  clear_documents_when_no_upload: true
 
 # === Document Management ===
 document:
