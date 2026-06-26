@@ -46,6 +46,14 @@ Every tool chosen with three criteria:
 | **Alternatives** | FAISS (faster, no built-in persistence), Qdrant (better for production, heavier), Weaviate (requires Docker) |
 | **Free limits** | Unlimited (Apache 2.0) |
 
+### BM25 + RRF Hybrid Search
+| Aspect | Detail |
+|--------|--------|
+| **Role** | Keyword retrieval fused with dense vectors for better Arabic coverage |
+| **Why this one** | BM25 catches Arabic terms that embeddings might miss (e.g. proper names, rare terms). RRF (Reciprocal Rank Fusion) combines BM25 and dense scores with alpha=0.5 weighting. |
+| **Alternatives** | Dense-only (misses keyword matches), hybrid with learned weighting (more complex) |
+| **Free limits** | Unlimited (MIT, built from scratch) |
+
 ### Ollama (llama3.2:3b)
 | Aspect | Detail |
 |--------|--------|

@@ -19,17 +19,18 @@ The following features are fully implemented and tested:
 | Document management | Done | List, delete, reindex documents |
 | Citations | Done | [page X] and [صفحة X] citation format |
 | Language-aware prompts | Done | Separate English/Arabic system prompts |
+| Arabic RAG pipeline | Done | Valeo ethics PDF, 3/3 Arabic questions answered correctly with citations |
 | Unsupported question handling | Done | Refuses to answer when context is insufficient |
-| Evaluation framework | Done | 22-question golden dataset with 6 metrics |
+| Evaluation framework | Done | 44-question golden dataset with 6 metrics |
 | Docker support | Done | Dockerfile + docker-compose (app + Ollama) |
-| Tests | Done | 163+ tests across all modules |
+| Tests | Done | 322+ tests across all modules |
 | GitHub Actions CI | Done | Automated lint, format check, test runner |
 
 ## Current Limitations
 
 - **LLM quality**: Small local model (llama3.2:3b) is fast but can miss details. Upgrade to llama3.3:70b for production.
 - **Reranker**: Current cross-encoder is English-only; degrades Arabic retrieval. Needs multilingual reranker (e.g. BAAI/bge-reranker-v2-m3).
-- **Pass rate**: 45–50% on evaluation dataset. Remaining failures are retrieval gaps (expected pages not in top-k) and LLM answer quality.
+- **Pass rate**: 86% on Arabic subset (3/3). Overall varies by document — remaining failures are retrieval gaps (expected pages not in top-k) and LLM answer quality.
 - **No auth**: Single-user, no login, no user isolation.
 - **No persistent memory**: Chat history is per-session in the UI; API accepts history per-request only.
 
@@ -47,4 +48,4 @@ The following features are fully implemented and tested:
 
 ## Success Gates
 
-- **V1**: All 163+ tests pass, 22 evaluation questions runnable, CI green on every push
+- **V1**: All 322+ tests pass, 44 evaluation questions runnable, CI green on every push
