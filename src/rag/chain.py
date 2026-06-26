@@ -73,6 +73,10 @@ class RAGChain:
         """
         chunks = self._retrieve(question, document_id=document_id)
 
+        print(f"DEBUG: chunks found = {len(chunks)}")
+        if chunks:
+            print(f"DEBUG: scores = {[round(c.score, 4) for c in chunks]}")
+            print(f"DEBUG: max score = {max(c.score for c in chunks)}")
         insufficient = (
             len(chunks) == 0 or max(c.score for c in chunks) < settings.retrieval.score_threshold
         )
