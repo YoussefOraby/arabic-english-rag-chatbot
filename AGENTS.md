@@ -23,7 +23,7 @@ python evaluation/debug/debug_chatbot.py
 
 ```
 evaluation/
-  golden_questions.json   # 39 curated questions (RAG paper + synthetic resume + unsupported)
+  golden_questions.json   # 44 curated questions (RAG paper + synthetic resume + unsupported + arabic_policy)
   evaluate.py             # Runs eval against the live API, categorizes failures, writes reports
   runs/                   # Per-run results (results.json, report.md, summary.csv)
   debug/
@@ -31,7 +31,7 @@ evaluation/
     plan.md               # RAG debugging guide
 
 tests/
-  test_golden_resume.py   # 37 tests: PDF parseability, eval engine correctness, answer logic
+  test_golden_resume.py   # 60 tests: PDF parseability, eval engine correctness, answer logic
   test_evaluate.py        # 43 tests: keyword matching, Arabic normalization, refusal detection
 
 fixtures/
@@ -42,17 +42,9 @@ fixtures/
 
 ## Evaluation Methodology
 
-### Test Suite (37 automated tests in test_golden_resume.py)
+### Test Suite (60 automated tests in test_golden_resume.py, 43 in test_evaluate.py)
 
-| Category | Tests | What It Verifies |
-|----------|-------|------------------|
-| PDF parseability | 2 | golden_resume.pdf text extraction via fitz |
-| JSON validity | 6 | Golden questions schema, unique IDs, required fields |
-| evaluate_answer() | 15 | FALSE_NEGATIVE, FALSE_POSITIVE, MISSING_KEYWORD, FORBIDDEN_KEYWORD, WRONG_CITATION, Arabic/mixed support, empty answers |
-| is_insufficient_data() | 7 | Refusal phrase detection, negative cases |
-| extract_citations() | 7 | Bracketed page citation parsing |
-
-**Run:** `python -m pytest tests/test_golden_resume.py -v`
+**Run:** `python -m pytest tests/test_golden_resume.py tests/test_evaluate.py -v`
 
 ### Golden Questions Dataset (golden_questions.json)
 
@@ -61,6 +53,7 @@ fixtures/
 | research_paper | 16 | English, Arabic, mixed questions about the RAG survey paper (2312.10997) |
 | synthetic_resume | 12 | Identity, list, mixed questions about the golden resume (Ahmed Hassan) |
 | unsupported | 11 | Questions NOT answerable from any uploaded document |
+| arabic_policy | 5 | Questions about Valeo code of business ethics (Arabic PDF) |
 
 ### Failure Categories
 
@@ -88,14 +81,12 @@ import requests
 requests.post("http://localhost:8000/upload", files={"file": open("tests/fixtures/golden_resume.pdf", "rb")})
 ```
 
-### Baseline Results (2026-06-23)
+### Recent Results
 
 | Metric | Value |
 |--------|-------|
-| **Overall pass rate** | **35.9%** (14/39) |
-| Research paper (English) | 31.2% (5/16) |
-| Synthetic resume | 0% (0/12) — golden resume NOT ingested |
-| Unsupported | 81.8% (9/11) |
+| **Tests passing** | **322/322** (100%) |
+| Arabic questions (Valeo ethics) | 3/3 (100%) |
 
 ## Debugging Guide
 
@@ -119,7 +110,7 @@ requests.post("http://localhost:8000/upload", files={"file": open("tests/fixture
 - `src/rag/retriever.py` — Embedding & retrieval logic
 - `src/llm/ollama_llm.py` — LLM call formatting and response parsing
 - `src/embeddings/store.py` — ChromaDB vector store operations
-- `src/api/main.py` — API endpoints (/query, /upload, /health)
+- `src/api/main.py` — API endpoints (/query, /upload, /documents, /reindex, /health, /stats)
 
 ## Adding New Golden Questions
 
